@@ -17,7 +17,7 @@ Add something like this to your manifest:
 
     $rsa_priv = ssh_keygen({name => "ssh_host_rsa_${::fqdn}", dir => 'ssh/hostkeys'})
     $rsa_pub  = ssh_keygen({name => "ssh_host_rsa_${::fqdn}", dir => 'ssh/hostkeys', public => 'true'})
-    
+
     file { '/etc/ssh/ssh_host_rsa_key':
       owner   => 'root',
       group   => 'root',
@@ -28,7 +28,7 @@ Add something like this to your manifest:
       owner   => 'root',
       group   => 'root',
       mode    => 0644,
-      content => "ssh-rsa $rsa_priv host_rsa_${::hostname}\n",
+      content => "ssh-rsa $rsa_pub host_rsa_${::hostname}\n",
     }
 
 This will store an RSA SSH key on your puppet master for each host

@@ -34,13 +34,13 @@ class ssh {
   }
 
   # Generate RSA keys reliably
-  $rsa_priv = ssh_keygen({name => "ssh_host_rsa_${::fqdn}", dir => 'ssh/hostkeys'}) 
-  $rsa_pub  = ssh_keygen({name => "ssh_host_rsa_${::fqdn}", dir => 'ssh/hostkeys', public => 'true'}) 
+  $rsa_priv = ssh_keygen({name => "ssh_host_rsa_${::fqdn}", dir => 'ssh/hostkeys'})
+  $rsa_pub  = ssh_keygen({name => "ssh_host_rsa_${::fqdn}", dir => 'ssh/hostkeys', public => 'true'})
 
   file { '/etc/ssh/ssh_host_rsa_key':
     owner   => 'root',
     group   => 'root',
-    mode    => 0600,
+    mode    => '0600',
     content => $rsa_priv,
     notify  => Service['ssh'],
   }
@@ -48,9 +48,44 @@ class ssh {
   file { '/etc/ssh/ssh_host_rsa_key.pub':
     owner   => 'root',
     group   => 'root',
-    mode    => 0644,
+    mode    => '0644',
     content => "ssh-rsa $rsa_priv host_rsa_${::hostname}\n",
     notify  => Service['ssh'],
   }
 
+  # Generate ECDSA keys reliably
+  $ecdsa_priv = ssh_keygen({name => "ssh_host_ecdsa_${::fqdn}", dir => 'ssh/hostkeys', type => 'ecdsa'})
+  $ecdsa_pub  = ssh_keygen({name => "ssh_host_ecdsa_${::fqdn}", dir => 'ssh/hostkeys', type => 'ecdsa', public => 'true'})
+
+  file { '/etc/ssh/ssh_host_ecdsa_key':
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0600',
+    content => $ecdsa_priv,
+  }
+
+  file { '/etc/ssh/ssh_host_ecdsa_key.pub':
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => "ssh-ecdsa $ecdsa_priv host_ecdsa_${::hostname}\n",
+  }
+
+  # Generate ED25519 keys reliably
+  $ed25519_priv = ssh_keygen({name => "ssh_host_ed25519_${::fqdn}", dir => 'ssh/hostkeys', type => 'ed25519'})
+  $ed25519_pub  = ssh_keygen({name => "ssh_host_ed25519_${::fqdn}", dir => 'ssh/hostkeys', type => 'ed25519', public => 'true'})
+
+  file { '/etc/ssh/ssh_host_ed25519_key':
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0600',
+    content => $ed25519_priv,
+  }
+
+  file { '/etc/ssh/ssh_host_ed25519_key.pub':
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => "ssh-ed25519 $ed25519_priv host_ed25519_${::hostname}\n",
+  }
 }

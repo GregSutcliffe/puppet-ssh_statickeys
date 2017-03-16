@@ -25,8 +25,12 @@ module Puppet::Parser::Functions
       'public' => false,
     }.merge(config)
 
-    config['size'] = 1024 if config['type'] == 'dsa' and config['size'] > 1024
+    # Ensure dsa uses keylength 1024
+    config['size'] = 1024 if config['type'] == 'dsa'
+    # Ensure ecdsa uses keylength 521
+    config['size'] = 521  if config['type'] == 'ecdsa'
 
+    # XXX hard coded path!
     fullpath = "/etc/puppet/#{config['dir']}"
 
     # Make sure to write out a directory to init if necessary
